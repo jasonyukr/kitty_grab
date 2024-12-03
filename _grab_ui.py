@@ -654,6 +654,11 @@ class GrabHandler(Handler):
             for line_slice, _half in [string_slice(plain, start_x, end_x)])}
         self.quit_loop(0)
 
+    def smart_confirm(self, *args: Any) -> None:
+        self.move('word_left')
+        self.set_mode('visual')
+        self.move('word_right')
+        self.confirm(args);
 
 def main(args: List[str]) -> Optional['ResultDict']:
     def ospec() -> str:
