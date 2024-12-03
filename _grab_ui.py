@@ -605,6 +605,18 @@ class GrabHandler(Handler):
                             self.point.y, self.point.top_line - 1)
         return self.point
 
+    def smart_word_left(self) -> Position:
+        if self.point.x > 0:
+            line = unstyled(self.lines[self.point.line - 1])
+            pos = truncate_point_for_length(line, self.point.x)
+            pred = self._is_word_char
+            new_pos = pos - len(''.join(takewhile(pred, reversed(line[:pos]))))
+            return Position(wcswidth(line[:new_pos]),
+                            self.point.y, self.point.top_line)
+        else:
+            return Position(wcswidth(''),
+                            self.point.y, self.point.top_line)
+
     def word_right(self) -> Position:
         line = unstyled(self.lines[self.point.line - 1])
         pos = truncate_point_for_length(line, self.point.x)
@@ -655,8 +667,7 @@ class GrabHandler(Handler):
         self.quit_loop(0)
 
     def smart_confirm(self, *args: Any) -> None:
-        self.move('right')
-        self.move('word_left')
+        self.move('smart_word_left')
         self.set_mode('visual')
         self.move('word_right')
         self.confirm(args);
