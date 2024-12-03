@@ -655,6 +655,7 @@ class GrabHandler(Handler):
         self.quit_loop(0)
 
     def smart_confirm(self, *args: Any) -> None:
+        self.move('right')
         self.move('word_left')
         self.set_mode('visual')
         self.move('word_right')
