@@ -83,6 +83,7 @@ defaults.map = [
     (ParsedShortcut(mods=0, key_name='ENTER'), KeyAction('confirm')),  # noqa
     # smart-confirm
     (ParsedShortcut(mods=4, key_name='ENTER'), KeyAction('smart_confirm')),  # noqa
+    (ParsedShortcut(mods=4, key_name='^'), KeyAction('smart_confirm')),      # noqa
     # move
     (ParsedShortcut(mods=0, key_name='LEFT'), KeyAction('move', ('left',))),  # noqa
     # move
