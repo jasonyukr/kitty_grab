@@ -654,6 +654,11 @@ class GrabHandler(Handler):
         self.mode = mode
         self._select('noop', self.mode_types[mode])
 
+    def set_mode_0(self, mode: ModeTypeStr) -> None:
+        self.move('first')
+        self.mode = mode
+        self._select('noop', self.mode_types[mode])
+
     def confirm(self, *args: Any) -> None:
         start, end = self._start_end()
         self.result = {'copy': '\n'.join(

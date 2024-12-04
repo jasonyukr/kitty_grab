@@ -174,6 +174,8 @@ defaults.map = [
     (ParsedShortcut(mods=6, key_name='RIGHT'), KeyAction('select', ('columnar', 'word_right'))),  # noqa
     # set_mode
     (ParsedShortcut(mods=0, key_name='v'), KeyAction('set_mode', ('visual',))),  # noqa
+    # set_mode_0
+    (ParsedShortcut(mods=1, key_name='v'), KeyAction('set_mode_0', ('visual',))),  # noqa
     # set_mode
     (ParsedShortcut(mods=4, key_name='v'), KeyAction('set_mode', ('block',))),  # noqa
     # set_mode
