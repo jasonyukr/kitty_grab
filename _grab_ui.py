@@ -584,6 +584,9 @@ class GrabHandler(Handler):
         return (unicodedata.category(c)[0] in 'LN'
                 or c in self._select_by_word_characters)
 
+    def _is_nonspace_char(self, c: str) -> bool:
+        return (c not in ' \t\r\n')
+
     def _is_word_separator(self, c: str) -> bool:
         return (unicodedata.category(c)[0] not in 'LN'
                 and c not in self._select_by_word_characters)
@@ -605,11 +608,12 @@ class GrabHandler(Handler):
                             self.point.y, self.point.top_line - 1)
         return self.point
 
+    # TODO: handle the tab character case
     def smart_word_left(self) -> Position:
         if self.point.x > 0:
             line = unstyled(self.lines[self.point.line - 1])
             pos = truncate_point_for_length(line, self.point.x)
-            pred = self._is_word_char
+            pred = self._is_nonspace_char
             new_pos = pos - len(''.join(takewhile(pred, reversed(line[:pos]))))
             return Position(wcswidth(line[:new_pos]),
                             self.point.y, self.point.top_line)
@@ -623,6 +627,21 @@ class GrabHandler(Handler):
         if pos < len(line):
             pred = (self._is_word_char if self._is_word_char(line[pos])
                     else self._is_word_separator)
+            new_pos = pos + len(''.join(takewhile(pred, line[pos:])))
+            return Position(wcswidth(line[:new_pos]),
+                            self.point.y, self.point.top_line)
+        if self.point.y < self.screen_size.rows - 1:
+            return Position(0, self.point.y + 1, self.point.top_line)
+        if self.point.top_line + self.point.y < len(self.lines):
+            return Position(0, self.point.y, self.point.top_line + 1)
+        return self.point
+
+    # TODO: handle the tab character case
+    def smart_word_right(self) -> Position:
+        line = unstyled(self.lines[self.point.line - 1])
+        pos = truncate_point_for_length(line, self.point.x)
+        if pos < len(line):
+            pred = self._is_nonspace_char
             new_pos = pos + len(''.join(takewhile(pred, line[pos:])))
             return Position(wcswidth(line[:new_pos]),
                             self.point.y, self.point.top_line)
@@ -674,7 +693,7 @@ class GrabHandler(Handler):
     def smart_confirm(self, *args: Any) -> None:
         self.move('smart_word_left')
         self.set_mode('visual')
-        self.move('word_right')
+        self.move('smart_word_right')
         self.confirm(args);
 
 def main(args: List[str]) -> Optional['ResultDict']:
